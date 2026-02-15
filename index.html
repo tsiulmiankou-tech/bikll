@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Simple File Share</title>
+</head>
+<body>
+  <h2>Передача файлов</h2>
+
+  <input type="file" id="fileInput">
+  <button onclick="createConnection()">Создать соединение</button>
+
+  <br><br>
+
+  <textarea id="offer" placeholder="Скопируй и отправь это другу"></textarea>
+  <textarea id="answer" placeholder="Вставь ответ сюда"></textarea>
+
+  <button onclick="sendAnswer()">Подключиться</button>
+
+  <script>
+    let pc = new RTCPeerConnection();
+    let dataChannel;
+
+    function createConnection() {
+      dataChannel = pc.createDataChannel("file");
+      setupChannel();
+
+      pc.createOffer().then(offer => {
+        pc.setLocalDescription(offer);
+        document.getElementById("offer").value = JSON.stringify(offer);
+      });
+    }
+
+    function sendAnswer() {
+      const answer = JSON.parse(document.getElementById("answer").value);
+      pc.setRemoteDescription(answer);
+    }
+
+    pc.ondatachannel = event => {
+      dataChannel = event.channel;
+      setupChannel();
+    };
+
+    function setupChannel() {
+      dataChannel.onmessage = event => {
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(new Blob([event.data]));
+        link.download = "received_file";
+        link.click();
+      };
+
+      document.getElementById("fileInput").onchange = e => {
+        const file = e.target.files[0];
+        file.arrayBuffer().then(buffer => {
+          dataChannel.send(buffer);
+        });
+      };
+    }
+  </script>
+</body>
+</html>
