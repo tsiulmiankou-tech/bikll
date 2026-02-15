@@ -1,61 +1,73 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Simple File Share</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FastDrop</title>
+<style>
+body{font-family:sans-serif;background:#0f172a;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0}
+.card{background:#1e293b;padding:30px;border-radius:16px;width:320px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+h2{margin:0 0 20px}
+input,button{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:none}
+input{background:#334155;color:#fff}
+button{background:#3b82f6;color:#fff;font-weight:bold;cursor:pointer}
+button:hover{background:#2563eb}
+.link{font-size:12px;word-break:break-all;margin-top:10px;color:#94a3b8}
+</style>
 </head>
 <body>
-  <h2>Передача файлов</h2>
 
-  <input type="file" id="fileInput">
-  <button onclick="createConnection()">Создать соединение</button>
+<div class="card">
+<h2>📦 FastDrop</h2>
+<input type="file" id="file">
+<button onclick="createRoom()">Создать ссылку</button>
+<div class="link" id="roomLink"></div>
+</div>
 
-  <br><br>
+<script>
+const pc = new RTCPeerConnection({
+  iceServers:[{urls:"stun:stun.l.google.com:19302"}]
+});
+let dc;
 
-  <textarea id="offer" placeholder="Скопируй и отправь это другу"></textarea>
-  <textarea id="answer" placeholder="Вставь ответ сюда"></textarea>
+const room = location.hash.slice(1);
 
-  <button onclick="sendAnswer()">Подключиться</button>
-
-  <script>
-    let pc = new RTCPeerConnection();
-    let dataChannel;
-
-    function createConnection() {
-      dataChannel = pc.createDataChannel("file");
-      setupChannel();
-
-      pc.createOffer().then(offer => {
-        pc.setLocalDescription(offer);
-        document.getElementById("offer").value = JSON.stringify(offer);
-      });
+if(room){
+  pc.ondatachannel=e=>{
+    dc=e.channel;
+    dc.onmessage=m=>{
+      const a=document.createElement("a");
+      a.href=URL.createObjectURL(new Blob([m.data]));
+      a.download="file";
+      a.click();
     }
+  };
+}
 
-    function sendAnswer() {
-      const answer = JSON.parse(document.getElementById("answer").value);
-      pc.setRemoteDescription(answer);
+async function createRoom(){
+  dc=pc.createDataChannel("file");
+  dc.onopen=()=>{
+    document.getElementById("file").onchange=e=>{
+      e.target.files[0].arrayBuffer().then(b=>dc.send(b));
     }
+  };
+  const offer=await pc.createOffer();
+  await pc.setLocalDescription(offer);
+  const link=location.href.split("#")[0]+"#"+btoa(JSON.stringify(offer));
+  document.getElementById("roomLink").textContent=link;
+}
 
-    pc.ondatachannel = event => {
-      dataChannel = event.channel;
-      setupChannel();
-    };
+pc.onicecandidate=e=>{
+  if(!e.candidate && room){
+    const offer=JSON.parse(atob(room));
+    pc.setRemoteDescription(offer);
+    pc.createAnswer().then(a=>{
+      pc.setLocalDescription(a);
+      alert("Отправь ответ создателю:\n\n"+btoa(JSON.stringify(a)));
+    });
+  }
+};
+</script>
 
-    function setupChannel() {
-      dataChannel.onmessage = event => {
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(new Blob([event.data]));
-        link.download = "received_file";
-        link.click();
-      };
-
-      document.getElementById("fileInput").onchange = e => {
-        const file = e.target.files[0];
-        file.arrayBuffer().then(buffer => {
-          dataChannel.send(buffer);
-        });
-      };
-    }
-  </script>
 </body>
 </html>
