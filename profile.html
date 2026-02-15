@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Профиль</title>
+
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/profile.css">
+</head>
+<body>
+
+<!-- бургер -->
+<div class="burger" id="burger">
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+
+<!-- меню -->
+<div class="menu" id="menu">
+    <a href="../index.html">На главную</a>
+    <a href="#" id="openSettings">Настройки</a>
+    <button id="logoutBtn">Выйти</button>
+</div>
+
+<main class="profile">
+    <div class="profile__box">
+        
+
+        <div class="profile__avatar">
+    <img id="avatarImg" src="../img/avatar.png" alt="avatar">
+    <input type="file" id="avatarInput" accept="image/*">
+    </div>
+
+
+        <h1 class="profile__title" id="userName">Пользователь</h1>
+        <p class="profile__text" id="userEmail">—</p>
+
+        <button class="profile__map-btn" onclick="location.href='map.html'">
+            🌍 Открыть карту путешествий
+        </button>
+
+    </div>
+</main>
+
+<!-- настройки -->
+<div class="settings" id="settings">
+    <div class="settings__panel">
+        <h2>Настройки</h2>
+
+        <label>
+            Имя
+            <input type="text" id="setName">
+        </label>
+
+        <label>
+            Email
+            <input type="email" id="setEmail">
+        </label>
+
+        <label>
+            Новый пароль
+            <input type="password" id="setPassword">
+        </label>
+
+        <label>
+            Аватар
+            <input type="file" id="setAvatar" accept="image/*">
+        </label>
+
+        <button id="saveSettings">Сохранить</button>
+        <button class="close" id="closeSettings">Закрыть</button>
+    </div>
+</div>
+
+
+
+
+<script src="../js/profile.js"></script>
+</body>
+</html>

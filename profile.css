@@ -1,0 +1,238 @@
+.profile{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#f6f7f9;
+}
+
+.profile__box{
+    background:#fff;
+    padding:40px;
+    width:420px;
+    border-radius:16px;
+    box-shadow:0 20px 40px rgba(0,0,0,.08);
+    text-align:center;
+}
+
+.profile__title{
+    font-size:28px;
+    margin:10px 0;
+}
+
+.profile__text{
+    color:#777;
+}
+
+/* аватар */
+.profile__avatar img{
+    width:110px;
+    height:110px;
+    border-radius:50%;
+    object-fit:cover;
+    cursor:pointer;
+}
+
+#avatarInput{
+    display:none;
+}
+
+/* кнопка карты */
+.profile__map-btn{
+    margin-top:30px;
+    width:100%;
+    padding:14px;
+    border-radius:12px;
+    border:none;
+    background:#ffb703;
+    color:#fff;
+    font-weight:600;
+    cursor:pointer;
+}
+
+/* бургер */
+.burger{
+    position:fixed;
+    top:20px;
+    left:20px;
+    width:30px;
+    cursor:pointer;
+    z-index:100;
+}
+
+.burger span{
+    display:block;
+    height:3px;
+    background:#222;
+    margin:6px 0;
+}
+
+/* меню */
+.menu{
+    position:fixed;
+    top:0;
+    left:-220px;
+    width:200px;
+    height:100%;
+    background:#fff;
+    padding:80px 20px;
+    box-shadow:2px 0 20px rgba(0,0,0,.1);
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+    transition:.3s;
+}
+
+.menu.active{
+    left:0;
+}
+
+/* настройки */
+.settings{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.4);
+    display:none;
+    align-items:center;
+    justify-content:center;
+}
+
+.settings.active{
+    display:flex;
+}
+
+.settings__panel{
+    background:#fff;
+    width:360px;
+    padding:30px;
+    border-radius:16px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+.settings {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 300;
+}
+
+.settings.active {
+    display: flex;
+}
+
+/* панель */
+.settings__panel {
+    background: #fff;
+    width: 380px;
+    padding: 32px;
+    border-radius: 18px;
+    box-shadow: 0 30px 60px rgba(0,0,0,.2);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    animation: popup .25s ease;
+}
+
+@keyframes popup {
+    from {
+        transform: scale(.95);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.settings__panel h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* поля */
+.settings__panel label {
+    font-size: 14px;
+    color: #444;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.settings__panel input {
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    outline: none;
+    transition: .2s;
+}
+
+.settings__panel input:focus {
+    border-color: #ffb703;
+    box-shadow: 0 0 0 2px rgba(255,183,3,.2);
+}
+
+/* кнопки */
+.settings__panel button {
+    padding: 14px;
+    border-radius: 14px;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#saveSettings {
+    background: #ffb703;
+    color: #fff;
+}
+
+#saveSettings:hover {
+    background: #f1a800;
+}
+
+.settings__panel .close {
+    background: #f0f0f0;
+}
+
+.settings__panel .close:hover {
+    background: #e2e2e2;
+}
+.sidebar{
+    position:fixed;
+    right:20px;
+    top:50%;
+    transform:translateY(-50%);
+    width:260px;
+    max-height:70vh;
+    background:#fff;
+    padding:20px;
+    border-radius:16px;
+    box-shadow:0 20px 40px rgba(0,0,0,.1);
+    overflow-y:auto;
+}
+
+.sidebar h3{
+    margin-bottom:12px;
+    font-size:18px;
+    text-align:center;
+}
+
+#cityList{
+    list-style:none;
+    padding:0;
+    margin:0;
+}
+
+#cityList li{
+    background:#f4f5f7;
+    padding:10px 12px;
+    border-radius:10px;
+    margin-bottom:8px;
+    font-size:14px;
+}

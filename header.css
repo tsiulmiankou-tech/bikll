@@ -1,0 +1,67 @@
+.header{
+width:100%;
+background:#fff;
+border-bottom:1px solid #eee;
+}
+
+.header__container{
+max-width:1200px;
+margin:0 auto;
+padding:20px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+}
+
+.header__logo{
+font-size:22px;
+font-weight:600;
+letter-spacing:.5px;
+}
+
+.header__logo span{
+font-weight:800;
+}
+
+.header__nav{
+display:flex;
+gap:30px;
+align-items:center;
+}
+
+.header__nav a{
+text-decoration:none;
+color:#111;
+font-weight:500;
+transition:.2s;
+}
+
+.header__nav a:hover{
+opacity:.7;
+}
+
+.header__nav button{
+background:none;
+border:none;
+cursor:pointer;
+font-size:15px;
+color:#111;
+font-weight:500;
+transition:.2s;
+}
+
+.header__nav button:hover{
+opacity:.7;
+}
+
+/* dark theme */
+body.theme-dark .header{
+background:#0f0f0f;
+border-bottom:1px solid #222;
+}
+
+body.theme-dark .header__nav a,
+body.theme-dark .header__nav button,
+body.theme-dark .header__logo{
+color:#fff;
+}
