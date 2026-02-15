@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FastDrop</title>
+<style>
+body{font-family:sans-serif;background:#0f172a;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
+.card{background:#1e293b;padding:25px;border-radius:16px;width:340px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+h2{margin:0 0 15px}
+input,button{width:100%;padding:10px;margin:6px 0;border-radius:8px;border:none}
+input{background:#334155;color:#fff}
+button{background:#3b82f6;color:#fff;font-weight:bold;cursor:pointer}
+button:hover{background:#2563eb}
+.link{font-size:12px;word-break:break-all;margin-top:10px;color:#94a3b8}
+.progress{height:6px;background:#334155;border-radius:4px;margin-top:10px;overflow:hidden}
+.bar{height:100%;width:0;background:#22c55e}
+</style>
+</head>
+<body>
+
+<div class="card">
+<h2>📦 FastDrop</h2>
+<input type="file" id="file">
+<button id="create">Создать ссылку</button>
+<div class="link" id="status"></div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+</div>
+
+<script>
+const pc=new RTCPeerConnection({
+ iceServers:[{urls:"stun:stun.l.google.com:19302"}]
+});
+let dc,fileSize,received=0,buffer=[];
+
+const status=document.getElementById("status");
+const bar=document.getElementById("bar");
+const hash=location.hash.slice(1);
+
+if(hash){
+ joinRoom(hash);
+}else{
+ document.getElementById("create").onclick=createRoom;
+}
+
+async function createRoom(){
+ dc=pc.createDataChannel("file");
+ setupSender();
+ const offer=await pc.createOffer();
+ await pc.setLocalDescription(offer);
+ const link=location.href+"#"+btoa(JSON.stringify(offer));
+ status.textContent="Отправь ссылку:\n"+link;
+}
+
+async function joinRoom(data){
+ const offer=JSON.parse(atob(data));
+ await pc.setRemoteDescription(offer);
+ const answer=await pc.createAnswer();
+ await pc.setLocalDescription(answer);
+ status.textContent="Скопируй ответ и отправь создателю:";
+ prompt("Скопируй и отправь:",btoa(JSON.stringify(answer)));
+}
+
+pc.onicecandidate=e=>{
+ if(!e.candidate && hash){
+  // ничего
+ }
+};
+
+pc.ondatachannel=e=>{
+ dc=e.channel;
+ setupReceiver();
+};
+
+function setupSender(){
+ dc.onopen=()=>{
+  status.textContent="Соединено. Выбери файл.";
+  document.getElementById("file").onchange=e=>{
+   const file=e.target.files[0];
+   fileSize=file.size;
+   const chunk=16*1024;
+   let offset=0;
+   const reader=new FileReader();
+   reader.onload=()=>{
+    dc.send(reader.result);
+    offset+=reader.result.byteLength;
+    bar.style.width=(offset/fileSize*100)+"%";
+    if(offset<fileSize){
+     readSlice(offset);
+    }
+   };
+   const readSlice=o=>{
+    const slice=file.slice(o,o+chunk);
+    reader.readAsArrayBuffer(slice);
+   };
+   readSlice(0);
+  };
+ };
+}
+
+function setupReceiver(){
+ dc.onmessage=e=>{
+  buffer.push(e.data);
+  received+=e.data.byteLength;
+  bar.style.width="100%";
+  const blob=new Blob(buffer);
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="file";
+  a.click();
+  status.textContent="Файл получен ✅";
+ };
+}
+</script>
+
+</body>
+</html>
